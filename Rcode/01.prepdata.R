@@ -27,7 +27,7 @@ pmdata <- readRDS("data/synthpmdata.RDS") |> as.data.table()
 outdeath <- readRDS("data/synthoutdeath.RDS") |> as.data.table()
 
 # DEFINE THE ANNUAL LAGS FOR PM2.5
-pmdata[, paste0("pm25_",0:7):=shift(pm25, 0:7), by=eid]
+pmdata[, paste0("pm25_",0:lag):=shift(pm25, 0:lag), by=eid]
 
 # TRANSFORM BASELINE VARIABLES IN UNORDERED FACTORS (FOR REGRESSION MODEL)
 ordvar <- names(bdbasevar)[sapply(bdbasevar, is.ordered)]

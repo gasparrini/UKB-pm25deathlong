@@ -20,9 +20,9 @@
 argvar <- list(fun="lin") 
 arglag1 <- list(fun="ns", df=4, int=T)
 arglag2 <- list(fun="strata", breaks=c(1,3,5), int=T)
-cbpm1 <- crossbasis(as.matrix(data[, paste0("pm25_",0:7)])[,seq(lag+1)],
+cbpm1 <- crossbasis(subset(data, select=paste0("pm25_",0:lag)),
   lag=lag, argvar=argvar, arglag=arglag1)
-cbpm2 <- crossbasis(as.matrix(data[, paste0("pm25_",0:7)])[,seq(lag+1)],
+cbpm2 <- crossbasis(subset(data, select=paste0("pm25_",0:lag)),
   lag=lag, argvar=argvar, arglag=arglag2)
 
 # FIT THE MODELS UPDATING THE MAIN MODEL

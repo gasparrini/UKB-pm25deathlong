@@ -43,14 +43,14 @@ data[, year:= year(as.Date(dstartfu, origin=as.Date("1970-01-01")))]
 data[, yearexp:= year-1]
 
 # MERGE WITH PM DATA USING LAG-0 YEAR DEFINITION
-# NB: OMITTING MISSING TO KEEP FULL LAG 0-7 HISTORIES
+# NB: OMITTING MISSING TO KEEP FULL LAG HISTORIES
 setkey(data, eid, year)
 setkey(pmdata, eid, year)
 data <- merge(data, na.omit(pmdata), by.x=c("eid","yearexp"), 
   by.y=c("eid","year"))
 
 # COMPUTE MOVING AVERAGE OF TIME-VARYING PM DATA
-data[, pm25_ma:=rowMeans(.SD), .SDcols=paste0("pm25_",0:7)]
+data[, pm25_ma:=rowMeans(.SD), .SDcols=paste0("pm25_",0:lag)]
 
 # MERGE WITH BASELINE VARS
 data <- subset(data, select=-c(sex,asscentre)) |> merge(bdbasevar, by="eid")
@@ -61,5 +61,5 @@ fmod <- paste("Surv(dstartfu,dexit,event) ~ strata(asscentre,sex,birthyear) +",
   paste(conf, collapse="+"), "+ pm25_ma") |> as.formula()
 
 # FIT THE MODEL
-# NB: THIS TAKES SLIGHTLY MORE THAN 3 MIN WITH 1.30GHz/16GbRAM LAPTOP
+# NB: THIS TAKES SLIGHTLY LONGER THAN 3 MIN WITH 1.30GHz/16GbRAM LAPTOP
 mainmod <- coxph(fmod, data=data, ties="efron")
